@@ -4,23 +4,28 @@ font-family:Poppins;
 background:linear-gradient(135deg,#eef2ff,#f5f3ff);
 }
 
+/* NAVBAR */
+
 .navbar{
 display:flex;
 justify-content:space-between;
 align-items:center;
 padding:20px 8%;
 background:white;
+flex-wrap:wrap;
 }
 
 .menu{
 display:flex;
 gap:20px;
 list-style:none;
+padding:0;
 }
 
 .menu a{
 text-decoration:none;
 color:black;
+font-weight:500;
 }
 
 .logo{
@@ -34,7 +39,7 @@ width:45px;
 height:45px;
 }
 
-/* hero */
+/* HERO */
 
 .hero{
 display:flex;
@@ -43,6 +48,16 @@ justify-content:center;
 gap:80px;
 padding:120px 10%;
 position:relative;
+flex-wrap:wrap;
+}
+
+.hero-text h1{
+font-size:40px;
+margin:0;
+}
+
+.hero-text p{
+font-size:18px;
 }
 
 .banner{
@@ -51,6 +66,7 @@ color:white;
 padding:8px 20px;
 border-radius:20px;
 margin:15px 0;
+display:inline-block;
 }
 
 .btn{
@@ -59,6 +75,7 @@ color:white;
 padding:12px 30px;
 border-radius:30px;
 text-decoration:none;
+display:inline-block;
 }
 
 .hero-images{
@@ -72,7 +89,7 @@ width:150px;
 border-radius:15px;
 }
 
-/* blobs */
+/* BLOBS */
 
 .blob{
 position:absolute;
@@ -112,17 +129,23 @@ left:200px;
 100%{transform:translateY(0)}
 }
 
+/* STATS */
+
 .stats{
 display:flex;
 justify-content:center;
 gap:80px;
 padding:80px;
+flex-wrap:wrap;
 }
 
 .stat h2{
 font-size:50px;
 color:#6366f1;
+margin:0;
 }
+
+/* ABOUT */
 
 .about{
 padding:100px;
@@ -131,12 +154,15 @@ max-width:900px;
 margin:auto;
 }
 
+/* DIRECTOR */
+
 .director{
 display:flex;
 align-items:center;
 justify-content:center;
 gap:80px;
 padding:100px;
+flex-wrap:wrap;
 }
 
 .director-img img{
@@ -144,11 +170,18 @@ width:250px;
 border-radius:20px;
 }
 
+.director-text{
+max-width:500px;
+}
+
+/* COURSES */
+
 .cards{
 display:flex;
 justify-content:center;
 gap:30px;
 padding:80px;
+flex-wrap:wrap;
 }
 
 .card{
@@ -157,19 +190,25 @@ padding:30px;
 border-radius:20px;
 width:220px;
 text-align:center;
+box-shadow:0 10px 20px rgba(0,0,0,0.05);
 }
+
+/* GALLERY */
 
 .gallery-grid{
 display:flex;
 justify-content:center;
 gap:20px;
 padding:80px;
+flex-wrap:wrap;
 }
 
 .gallery-grid img{
 width:250px;
 border-radius:20px;
 }
+
+/* TESTIMONIAL */
 
 .testimonial{
 display:none;
@@ -178,16 +217,21 @@ padding:40px;
 width:400px;
 margin:auto;
 border-radius:20px;
+text-align:center;
 }
 
 .testimonial.active{
 display:block;
 }
 
+/* CONTACT */
+
 .contact{
 text-align:center;
 padding:80px;
 }
+
+/* WHATSAPP BUTTON */
 
 .whatsapp{
 position:fixed;
@@ -200,9 +244,78 @@ border-radius:50%;
 font-size:25px;
 }
 
+/* FOOTER */
+
 footer{
 background:#1e1b4b;
 color:white;
 text-align:center;
 padding:20px;
+}
+
+/* ---------------- MOBILE RESPONSIVE ---------------- */
+
+@media (max-width:768px){
+
+.navbar{
+flex-direction:column;
+gap:10px;
+}
+
+.menu{
+flex-wrap:wrap;
+justify-content:center;
+}
+
+.hero{
+flex-direction:column;
+text-align:center;
+gap:40px;
+padding:60px 20px;
+}
+
+.hero-images{
+grid-template-columns:repeat(2,120px);
+}
+
+.hero-images img{
+width:120px;
+}
+
+.stats{
+flex-direction:column;
+gap:40px;
+padding:40px;
+}
+
+.director{
+flex-direction:column;
+text-align:center;
+padding:50px 20px;
+}
+
+.cards{
+flex-direction:column;
+align-items:center;
+padding:40px;
+}
+
+.gallery-grid{
+flex-direction:column;
+align-items:center;
+padding:40px;
+}
+
+.gallery-grid img{
+width:90%;
+}
+
+.about{
+padding:40px 20px;
+}
+
+.testimonial{
+width:90%;
+}
+
 }
