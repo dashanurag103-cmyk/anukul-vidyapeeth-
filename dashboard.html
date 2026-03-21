@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anukul Vidyapeeth – Student Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ── ROOT ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080f;--bg2:#0e0f1a;--bg3:#12142a;
+  --surface:#161828;--surface2:#1e2140;
+  --border:rgba(99,102,241,0.18);
+  --glow:#6366f1;--glow2:#a855f7;--glow3:#06b6d4;
+  --gold:#f59e0b;--green:#22c55e;--red:#ef4444;
+  --text:#e2e4f3;--muted:#8890b5;
+  --font-h:'Playfair Display',serif;
+  --font:'DM Sans',sans-serif;
+  --r:14px;--r2:20px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── NOISE ───────────────────────────────────────── */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:.5}
+
+/* ── SCREENS ─────────────────────────────────────── */
+.screen{display:none;animation:fadeIn .4s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ══════════════════════════════════════════════════
+   LOGIN SCREEN
+══════════════════════════════════════════════════ */
+#loginScreen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:20px;position:relative;overflow:hidden;
+}
+.login-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none}
+.lo1{width:500px;height:500px;background:radial-gradient(circle,rgba(99,102,241,.25),transparent 70%);top:-150px;left:-150px}
+.lo2{width:400px;height:400px;background:radial-gradient(circle,rgba(168,85,247,.2),transparent 70%);bottom:-100px;right:-100px}
+.login-grid{position:absolute;inset:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%);opacity:.5}
+
+.login-box{
+  position:relative;z-index:2;
+  background:rgba(14,15,26,.85);
+  backdrop-filter:blur(24px);
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  padding:48px 44px;
+  width:100%;max-width:440px;
+  box-shadow:0 0 80px rgba(99,102,241,.12);
+}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.login-logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--glow),var(--glow2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#fff}
+.login-logo span{font-size:1.1rem;font-weight:600;color:#fff}
+.login-logo em{color:var(--glow);font-style:normal}
+
+.login-box h2{font-family:var(--font-h);font-size:1.9rem;color:#fff;margin-bottom:6px}
+.login-box .sub{color:var(--muted);font-size:.9rem;margin-bottom:32px}
+
+.tab-row{display:flex;background:var(--surface);border-radius:10px;padding:4px;margin-bottom:28px;gap:4px}
+.tab-btn{flex:1;padding:9px;border:none;background:transparent;color:var(--muted);font-family:var(--font);font-size:.88rem;font-weight:500;border-radius:8px;cursor:pointer;transition:all .2s}
+.tab-btn.active{background:linear-gradient(135deg,var(--glow),var(--glow2));color:#fff;box-shadow:0 0 16px rgba(99,102,241,.4)}
+
+.form-group{margin-bottom:16px;position:relative}
+.form-group label{display:block;font-size:.8rem;font-weight:500;color:var(--muted);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+.form-group input{
+  width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;
+  padding:13px 16px 13px 44px;color:var(--text);font-family:var(--font);font-size:.95rem;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.form-group input:focus{border-color:var(--glow);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.form-group .fi{position:absolute;left:15px;bottom:14px;color:var(--muted);font-size:.9rem}
+.form-group input:focus + .fi, .form-group:focus-within .fi{color:var(--glow)}
+
+.forgot{text-align:right;margin-bottom:24px}
+.forgot a{font-size:.82rem;color:var(--muted);text-decoration:none;transition:color .2s}
+.forgot a:hover{color:var(--glow)}
+
+.login-btn{
+  width:100%;background:linear-gradient(135deg,var(--glow),var(--glow2));
+  color:#fff;padding:14px;border-radius:10px;border:none;font-family:var(--font);
+  font-size:1rem;font-weight:600;cursor:pointer;
+  box-shadow:0 0 24px rgba(99,102,241,.4);
+  transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(99,102,241,.6)}
+.login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+.login-error{
+  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);
+  border-radius:8px;padding:10px 14px;font-size:.85rem;color:#ef4444;
+  margin-top:16px;display:none;align-items:center;gap:8px;
+}
+.login-error.show{display:flex}
+
+.demo-hint{
+  margin-top:20px;background:rgba(99,102,241,.07);border:1px solid var(--border);
+  border-radius:10px;padding:14px;font-size:.82rem;color:var(--muted);
+}
+.demo-hint strong{color:var(--glow);display:block;margin-bottom:6px}
+.demo-hint code{background:var(--surface);padding:2px 7px;border-radius:5px;color:var(--text);font-size:.8rem}
+
+/* ══════════════════════════════════════════════════
+   DASHBOARD SCREEN
+══════════════════════════════════════════════════ */
+#dashScreen{display:none;min-height:100vh}
+#dashScreen.active{display:flex}
+
+/* Sidebar */
+.sidebar{
+  width:260px;flex-shrink:0;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  transition:transform .3s;
+}
+.sb-logo{padding:24px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.sb-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--glow),var(--glow2));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem}
+.sb-logo span{font-size:.95rem;font-weight:600;color:#fff}
+.sb-logo em{color:var(--glow);font-style:normal}
+
+.sb-profile{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.sb-avatar{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--glow),var(--glow2));display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#fff;font-weight:700;flex-shrink:0}
+.sb-profile-info strong{display:block;font-size:.9rem;color:#fff}
+.sb-profile-info span{font-size:.78rem;color:var(--muted)}
+.sb-badge{background:rgba(99,102,241,.15);border:1px solid var(--border);color:var(--glow);font-size:.7rem;padding:2px 8px;border-radius:20px;margin-top:3px;display:inline-block}
+
+.sb-nav{flex:1;padding:16px 12px;overflow-y:auto}
+.sb-section{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 8px;margin:16px 0 8px}
+.sb-item{
+  display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;
+  color:var(--muted);font-size:.88rem;font-weight:500;cursor:pointer;
+  transition:all .2s;margin-bottom:3px;border:1px solid transparent;text-decoration:none;
+}
+.sb-item:hover{background:var(--surface);color:var(--text)}
+.sb-item.active{background:rgba(99,102,241,.12);color:var(--glow);border-color:var(--border)}
+.sb-item i{width:18px;text-align:center;font-size:.9rem}
+.sb-item .badge-count{margin-left:auto;background:var(--glow);color:#fff;font-size:.68rem;padding:1px 7px;border-radius:20px}
+
+.sb-bottom{padding:16px 12px;border-top:1px solid var(--border)}
+.logout-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:var(--font);font-size:.88rem;cursor:pointer;transition:all .2s}
+.logout-btn:hover{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.3);color:#ef4444}
+
+/* Main content */
+.main{
+  margin-left:260px;flex:1;display:flex;flex-direction:column;min-height:100vh;
+}
+
+/* Topbar */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(7,8,15,.8);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:14px 32px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.topbar-left h1{font-size:1.1rem;font-weight:600;color:#fff}
+.topbar-left p{font-size:.8rem;color:var(--muted);margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.tb-icon-btn{
+  width:38px;height:38px;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;color:var(--muted);font-size:.9rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative;
+}
+.tb-icon-btn:hover{color:var(--glow);border-color:var(--glow)}
+.notif-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid var(--bg2)}
+.topbar-hamburger{display:none}
+
+/* Content area */
+.content{padding:28px 32px;flex:1}
+
+/* Page panels */
+.page{display:none}
+.page.active{display:block;animation:fadeIn .3s ease}
+
+/* ── STAT CARDS ─────────────────────────────────── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.scard{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);
+  padding:22px 20px;position:relative;overflow:hidden;transition:all .3s;cursor:default;
+}
+.scard:hover{border-color:var(--glow);transform:translateY(-3px);box-shadow:0 12px 40px rgba(99,102,241,.12)}
+.scard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--c,linear-gradient(90deg,var(--glow),var(--glow2)));opacity:0;transition:opacity .3s}
+.scard:hover::before{opacity:1}
+.scard-icon{width:44px;height:44px;border-radius:12px;background:var(--ib,rgba(99,102,241,.12));display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--ic,var(--glow));margin-bottom:14px;border:1px solid var(--border)}
+.scard h3{font-size:1.8rem;font-weight:700;color:#fff;font-family:var(--font-h)}
+.scard p{font-size:.82rem;color:var(--muted);margin-top:4px}
+.scard .trend{font-size:.75rem;margin-top:8px;display:flex;align-items:center;gap:4px}
+.trend.up{color:var(--green)}.trend.down{color:var(--red)}
+
+/* ── SECTIONS ───────────────────────────────────── */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-hdr h2{font-size:1rem;font-weight:600;color:#fff}
+.section-hdr a{font-size:.82rem;color:var(--glow);text-decoration:none}
+
+/* ── TIMETABLE ───────────────────────────────────── */
+.timetable{width:100%;border-collapse:collapse;font-size:.85rem}
+.timetable th{background:var(--surface2);color:var(--muted);font-weight:500;padding:10px 14px;text-align:left;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+.timetable th:first-child{border-radius:10px 0 0 10px}
+.timetable th:last-child{border-radius:0 10px 10px 0}
+.timetable td{padding:12px 14px;border-bottom:1px solid rgba(99,102,241,.07);color:var(--text)}
+.timetable tr:last-child td{border-bottom:none}
+.timetable tr:hover td{background:rgba(99,102,241,.04)}
+.sub-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:500}
+.sp-math{background:rgba(99,102,241,.15);color:var(--glow)}
+.sp-sci{background:rgba(6,182,212,.15);color:var(--glow3)}
+.sp-eng{background:rgba(168,85,247,.15);color:#c084fc}
+.sp-hin{background:rgba(245,158,11,.15);color:var(--gold)}
+.sp-ss{background:rgba(34,197,94,.15);color:var(--green)}
+.today-row td{background:rgba(99,102,241,.05)}
+
+/* ── PROGRESS ───────────────────────────────────── */
+.progress-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+.prog-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:22px}
+.prog-card h3{font-size:.88rem;font-weight:600;color:#fff;margin-bottom:16px}
+.prog-item{margin-bottom:14px}
+.prog-item-hdr{display:flex;justify-content:space-between;margin-bottom:6px;font-size:.82rem}
+.prog-item-hdr span:first-child{color:var(--text)}
+.prog-item-hdr span:last-child{color:var(--muted)}
+.prog-bar-bg{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.prog-bar{height:100%;border-radius:3px;transition:width 1s ease}
+
+/* ── RECENT RESULTS ─────────────────────────────── */
+.results-list{display:flex;flex-direction:column;gap:10px}
+.result-item{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px 18px;display:flex;align-items:center;gap:16px;transition:all .2s;
+}
+.result-item:hover{border-color:var(--glow)}
+.ri-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.ri-info{flex:1}
+.ri-info strong{display:block;font-size:.9rem;color:#fff}
+.ri-info span{font-size:.78rem;color:var(--muted)}
+.ri-score{text-align:right}
+.ri-score .score{font-size:1.1rem;font-weight:700;font-family:var(--font-h)}
+.ri-score .grade{font-size:.75rem;padding:2px 8px;border-radius:20px;margin-top:2px;display:inline-block}
+.grade-a{background:rgba(34,197,94,.15);color:var(--green)}
+.grade-b{background:rgba(99,102,241,.15);color:var(--glow)}
+.grade-c{background:rgba(245,158,11,.15);color:var(--gold)}
+
+/* ── NOTICES ─────────────────────────────────────── */
+.notice-list{display:flex;flex-direction:column;gap:10px}
+.notice-item{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px 18px;display:flex;gap:14px;align-items:flex-start;transition:all .2s;
+}
+.notice-item:hover{border-color:var(--glow)}
+.ni-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ni-info strong{display:block;font-size:.88rem;color:#fff;margin-bottom:3px}
+.ni-info span{font-size:.78rem;color:var(--muted)}
+.ni-date{font-size:.75rem;color:var(--muted);margin-left:auto;white-space:nowrap}
+
+/* ── ATTENDANCE RING ────────────────────────────── */
+.attend-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:24px;display:flex;align-items:center;gap:24px}
+.ring-wrap{position:relative;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-center span{font-size:1.5rem;font-weight:700;color:#fff;font-family:var(--font-h);line-height:1}
+.ring-center small{font-size:.7rem;color:var(--muted)}
+.attend-details{flex:1}
+.attend-details h3{font-size:.9rem;font-weight:600;color:#fff;margin-bottom:12px}
+.ad-row{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:8px}
+.ad-row span:first-child{color:var(--muted)}
+.ad-row span:last-child{color:var(--text);font-weight:500}
+
+/* ── CALENDAR MINI ───────────────────────────────── */
+.mini-cal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:22px}
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.cal-hdr h3{font-size:.95rem;font-weight:600;color:#fff}
+.cal-nav{background:var(--surface2);border:none;color:var(--muted);width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:.8rem;transition:all .2s}
+.cal-nav:hover{background:var(--glow);color:#fff}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-day-hdr{font-size:.7rem;color:var(--muted);font-weight:600;padding:4px;text-transform:uppercase}
+.cal-day{font-size:.8rem;padding:6px 4px;border-radius:7px;color:var(--muted);cursor:default;transition:all .2s;position:relative}
+.cal-day:hover{background:var(--surface2);color:var(--text)}
+.cal-day.today{background:linear-gradient(135deg,var(--glow),var(--glow2));color:#fff;font-weight:700}
+.cal-day.has-event::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--gold);border-radius:50%}
+.cal-day.holiday{color:var(--red)}
+.cal-day.other-month{opacity:.3}
+
+/* ── ASSIGNMENTS ─────────────────────────────────── */
+.assign-list{display:flex;flex-direction:column;gap:10px}
+.assign-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:14px;transition:all .2s}
+.assign-item:hover{border-color:var(--glow)}
+.ai-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0;cursor:pointer;transition:all .2s}
+.ai-check.done{background:var(--green);border-color:var(--green);color:#fff}
+.ai-info{flex:1}
+.ai-info strong{font-size:.88rem;color:#fff;display:block}
+.ai-info span{font-size:.75rem;color:var(--muted)}
+.ai-due{font-size:.75rem;padding:3px 10px;border-radius:20px;flex-shrink:0}
+.due-urgent{background:rgba(239,68,68,.12);color:var(--red)}
+.due-soon{background:rgba(245,158,11,.12);color:var(--gold)}
+.due-ok{background:rgba(34,197,94,.12);color:var(--green)}
+
+/* ── PROFILE PAGE ────────────────────────────────── */
+.profile-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:32px;display:flex;align-items:center;gap:28px;margin-bottom:24px}
+.ph-avatar{width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,var(--glow),var(--glow2));display:flex;align-items:center;justify-content:center;font-size:2rem;color:#fff;font-weight:700;flex-shrink:0}
+.ph-info h2{font-family:var(--font-h);font-size:1.6rem;color:#fff;margin-bottom:4px}
+.ph-info p{color:var(--muted);font-size:.9rem;margin-bottom:10px}
+.ph-tags{display:flex;gap:8px;flex-wrap:wrap}
+.ph-tag{background:rgba(99,102,241,.12);border:1px solid var(--border);color:var(--text);font-size:.78rem;padding:4px 12px;border-radius:20px}
+
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:24px}
+.info-card h3{font-size:.85rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(99,102,241,.06);font-size:.88rem}
+.info-row:last-child{border-bottom:none}
+.info-row span:first-child{color:var(--muted)}
+.info-row span:last-child{color:var(--text);font-weight:500}
+
+/* ── FEES PAGE ───────────────────────────────────── */
+.fee-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.fee-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:24px;text-align:center;transition:all .3s}
+.fee-card:hover{border-color:var(--glow);transform:translateY(-3px)}
+.fee-card .amount{font-family:var(--font-h);font-size:2rem;font-weight:700;margin:8px 0 4px}
+.fee-card .label{font-size:.8rem;color:var(--muted)}
+.fee-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.fee-table th{background:var(--surface2);color:var(--muted);font-weight:500;padding:10px 16px;text-align:left;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+.fee-table th:first-child{border-radius:10px 0 0 10px}
+.fee-table th:last-child{border-radius:0 10px 10px 0}
+.fee-table td{padding:14px 16px;border-bottom:1px solid rgba(99,102,241,.07);color:var(--text)}
+.fee-table tr:last-child td{border-bottom:none}
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:500}
+.sp-paid{background:rgba(34,197,94,.12);color:var(--green)}
+.sp-due{background:rgba(239,68,68,.12);color:var(--red)}
+.sp-upcoming{background:rgba(245,158,11,.12);color:var(--gold)}
+.pay-btn{background:linear-gradient(135deg,var(--glow),var(--glow2));color:#fff;border:none;padding:7px 18px;border-radius:20px;font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s}
+.pay-btn:hover{opacity:.85;transform:scale(1.03)}
+
+/* ── TOAST ───────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:28px;right:28px;z-index:9999;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:14px 20px;
+  display:flex;align-items:center;gap:12px;
+  font-size:.88rem;color:var(--text);
+  box-shadow:0 8px 40px rgba(0,0,0,.4);
+  transform:translateY(100px);opacity:0;
+  transition:all .4s cubic-bezier(.34,1.56,.64,1);
+  max-width:320px;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── MOBILE OVERLAY ────────────────────────────── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+
+/* ── RESPONSIVE ─────────────────────────────────── */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sb-overlay.show{display:block}
+  .main{margin-left:0}
+  .topbar-hamburger{display:flex}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .progress-grid{grid-template-columns:1fr}
+  .content{padding:20px 16px}
+  .info-grid{grid-template-columns:1fr}
+  .fee-summary{grid-template-columns:1fr}
+}
+@media(max-width:580px){
+  .stat-grid{grid-template-columns:1fr}
+  .topbar{padding:12px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══════════════════════════════════ -->
+<div id="loginScreen" class="screen active">
+  <div class="login-grid"></div>
+  <div class="login-orb lo1"></div>
+  <div class="login-orb lo2"></div>
+
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+      <span>Anukul <em>Vidyapeeth</em></span>
+    </div>
+    <h2>Welcome Back</h2>
+    <p class="sub">Sign in to your student portal</p>
+
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="setRole('student',this)"><i class="fa-solid fa-user-graduate"></i> Student</button>
+      <button class="tab-btn" onclick="setRole('teacher',this)"><i class="fa-solid fa-chalkboard-user"></i> Teacher</button>
+      <button class="tab-btn" onclick="setRole('admin',this)"><i class="fa-solid fa-user-shield"></i> Admin</button>
+    </div>
+
+    <div class="form-group">
+      <label>Roll No / Email</label>
+      <input type="text" id="loginId" placeholder="e.g. AV2026001" autocomplete="username">
+      <i class="fa-solid fa-user fi"></i>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="Enter your password" autocomplete="current-password">
+      <i class="fa-solid fa-lock fi"></i>
+    </div>
+    <div class="forgot"><a href="#">Forgot password?</a></div>
+
+    <button class="login-btn" onclick="doLogin()" id="loginBtn">
+      <i class="fa-solid fa-right-to-bracket"></i> Sign In
+    </button>
+
+    <div class="login-error" id="loginError">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span id="loginErrorMsg">Invalid credentials. Please try again.</span>
+    </div>
+
+    <div class="demo-hint">
+      <strong><i class="fa-solid fa-circle-info"></i> Demo Credentials</strong>
+      Student: <code>AV2026001</code> / <code>student123</code><br>
+      Teacher: <code>teacher@av.com</code> / <code>teacher123</code><br>
+      Admin: <code>admin@av.com</code> / <code>admin123</code>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD SCREEN ══════════════════════════════ -->
+<div id="dashScreen" class="screen">
+
+  <!-- Sidebar overlay -->
+  <div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+      <span>Anukul <em>Vidyapeeth</em></span>
+    </div>
+
+    <div class="sb-profile">
+      <div class="sb-avatar" id="sbAvatar">R</div>
+      <div class="sb-profile-info">
+        <strong id="sbName">Riya Patel</strong>
+        <span id="sbRoll">AV2026001</span>
+        <div class="sb-badge" id="sbBadge">Class 8 · CBSE</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="sb-section">Main</div>
+      <a class="sb-item active" onclick="showPage('home',this)"><i class="fa-solid fa-house"></i> Dashboard</a>
+      <a class="sb-item" onclick="showPage('timetable',this)"><i class="fa-solid fa-calendar-days"></i> Timetable</a>
+      <a class="sb-item" onclick="showPage('results',this)"><i class="fa-solid fa-chart-bar"></i> My Results</a>
+      <a class="sb-item" onclick="showPage('assignments',this)"><i class="fa-solid fa-clipboard-list"></i> Assignments <span class="badge-count">3</span></a>
+      <a class="sb-item" onclick="showPage('attendance',this)"><i class="fa-solid fa-user-check"></i> Attendance</a>
+
+      <div class="sb-section">Resources</div>
+      <a class="sb-item" onclick="showPage('notes',this)"><i class="fa-solid fa-book-open"></i> Study Notes</a>
+      <a class="sb-item" onclick="showPage('fees',this)"><i class="fa-solid fa-indian-rupee-sign"></i> Fee Records</a>
+      <a class="sb-item" onclick="showPage('notices',this)"><i class="fa-solid fa-bell"></i> Notices <span class="badge-count">2</span></a>
+
+      <div class="sb-section">Account</div>
+      <a class="sb-item" onclick="showPage('profile',this)"><i class="fa-solid fa-user-circle"></i> My Profile</a>
+    </nav>
+
+    <div class="sb-bottom">
+      <button class="logout-btn" onclick="doLogout()"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1 id="pageTitle">Dashboard</h1>
+        <p id="pageDate">Saturday, 21 March 2026</p>
+      </div>
+      <div class="topbar-right">
+        <button class="tb-icon-btn topbar-hamburger" onclick="openSidebar()"><i class="fa-solid fa-bars"></i></button>
+        <button class="tb-icon-btn" onclick="showPage('notices',document.querySelector('[onclick*=notices]'))">
+          <i class="fa-solid fa-bell"></i>
+          <span class="notif-dot"></span>
+        </button>
+        <button class="tb-icon-btn" onclick="showPage('profile',document.querySelector('[onclick*=profile]'))"><i class="fa-solid fa-user"></i></button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ── HOME PAGE ─────────────────────────────── -->
+      <div class="page active" id="page-home">
+
+        <div class="stat-grid">
+          <div class="scard" style="--c:linear-gradient(90deg,#6366f1,#a855f7);--ib:rgba(99,102,241,.12);--ic:var(--glow)">
+            <div class="scard-icon"><i class="fa-solid fa-percent"></i></div>
+            <h3>86%</h3><p>Overall Score</p>
+            <div class="trend up"><i class="fa-solid fa-arrow-up"></i> +4% this month</div>
+          </div>
+          <div class="scard" style="--c:linear-gradient(90deg,#22c55e,#16a34a);--ib:rgba(34,197,94,.12);--ic:var(--green)">
+            <div class="scard-icon"><i class="fa-solid fa-user-check"></i></div>
+            <h3>92%</h3><p>Attendance</p>
+            <div class="trend up"><i class="fa-solid fa-arrow-up"></i> Good standing</div>
+          </div>
+          <div class="scard" style="--c:linear-gradient(90deg,#f59e0b,#d97706);--ib:rgba(245,158,11,.12);--ic:var(--gold)">
+            <div class="scard-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+            <h3>3</h3><p>Pending Tasks</p>
+            <div class="trend down"><i class="fa-solid fa-clock"></i> Due this week</div>
+          </div>
+          <div class="scard" style="--c:linear-gradient(90deg,#06b6d4,#0891b2);--ib:rgba(6,182,212,.12);--ic:var(--glow3)">
+            <div class="scard-icon"><i class="fa-solid fa-star"></i></div>
+            <h3>A</h3><p>Current Grade</p>
+            <div class="trend up"><i class="fa-solid fa-arrow-up"></i> Top 10% of class</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+          <!-- Attendance ring -->
+          <div class="attend-card">
+            <div class="ring-wrap">
+              <svg width="110" height="110" viewBox="0 0 110 110">
+                <circle cx="55" cy="55" r="46" fill="none" stroke="rgba(99,102,241,.12)" stroke-width="10"/>
+                <circle cx="55" cy="55" r="46" fill="none" stroke="url(#rg)" stroke-width="10"
+                  stroke-dasharray="289" stroke-dashoffset="23" stroke-linecap="round"/>
+                <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#a855f7"/>
+                </linearGradient></defs>
+              </svg>
+              <div class="ring-center"><span>92%</span><small>Present</small></div>
+            </div>
+            <div class="attend-details">
+              <h3>Attendance — March 2026</h3>
+              <div class="ad-row"><span>Total Classes</span><span>25</span></div>
+              <div class="ad-row"><span>Present</span><span style="color:var(--green)">23</span></div>
+              <div class="ad-row"><span>Absent</span><span style="color:var(--red)">2</span></div>
+              <div class="ad-row"><span>Status</span><span style="color:var(--green)">✓ Regular</span></div>
+            </div>
+          </div>
+
+          <!-- Mini calendar -->
+          <div class="mini-cal" id="miniCalendar"></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+          <!-- Recent results -->
+          <div>
+            <div class="section-hdr"><h2>Recent Results</h2><a onclick="showPage('results',document.querySelector('[onclick*=results]'))">View all →</a></div>
+            <div class="results-list">
+              <div class="result-item">
+                <div class="ri-icon" style="background:rgba(99,102,241,.12);color:var(--glow)"><i class="fa-solid fa-square-root-variable"></i></div>
+                <div class="ri-info"><strong>Mathematics</strong><span>Unit Test 3 · Mar 15</span></div>
+                <div class="ri-score"><div class="score" style="color:var(--green)">47/50</div><div class="grade grade-a">A+</div></div>
+              </div>
+              <div class="result-item">
+                <div class="ri-icon" style="background:rgba(6,182,212,.12);color:var(--glow3)"><i class="fa-solid fa-flask"></i></div>
+                <div class="ri-info"><strong>Science</strong><span>Monthly Test · Mar 10</span></div>
+                <div class="ri-score"><div class="score" style="color:var(--glow)">41/50</div><div class="grade grade-b">A</div></div>
+              </div>
+              <div class="result-item">
+                <div class="ri-icon" style="background:rgba(168,85,247,.12);color:#c084fc"><i class="fa-solid fa-book"></i></div>
+                <div class="ri-info"><strong>English</strong><span>Unit Test 3 · Mar 8</span></div>
+                <div class="ri-score"><div class="score" style="color:var(--gold)">38/50</div><div class="grade grade-b">B+</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pending assignments -->
+          <div>
+            <div class="section-hdr"><h2>Pending Assignments</h2><a onclick="showPage('assignments',document.querySelector('[onclick*=assignments]'))">View all →</a></div>
+            <div class="assign-list">
+              <div class="assign-item">
+                <div class="ai-check" onclick="toggleAssign(this)"><i class="fa-solid fa-check" style="display:none"></i></div>
+                <div class="ai-info"><strong>Algebra — Chapter 5 Exercise</strong><span>Mathematics · Given: Mar 18</span></div>
+                <div class="ai-due due-urgent">Tomorrow</div>
+              </div>
+              <div class="assign-item">
+                <div class="ai-check" onclick="toggleAssign(this)"></div>
+                <div class="ai-info"><strong>Essay: My Role Model</strong><span>English · Given: Mar 19</span></div>
+                <div class="ai-due due-soon">Mar 24</div>
+              </div>
+              <div class="assign-item">
+                <div class="ai-check" onclick="toggleAssign(this)"></div>
+                <div class="ai-info"><strong>Diagram: Human Digestive System</strong><span>Science · Given: Mar 20</span></div>
+                <div class="ai-due due-ok">Mar 28</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notices -->
+        <div class="section-hdr"><h2>Latest Notices</h2><a onclick="showPage('notices',document.querySelector('[onclick*=notices]'))">View all →</a></div>
+        <div class="notice-list">
+          <div class="notice-item">
+            <div class="ni-dot" style="background:var(--red)"></div>
+            <div class="ni-info"><strong>Half-Yearly Exam Schedule Released</strong><span>Exams begin April 7. Download the detailed schedule from the Notices section.</span></div>
+            <div class="ni-date">Mar 20</div>
+          </div>
+          <div class="notice-item">
+            <div class="ni-dot" style="background:var(--gold)"></div>
+            <div class="ni-info"><strong>Holiday on March 25 — Holi</strong><span>No classes on March 25. Classes resume March 26 as scheduled.</span></div>
+            <div class="ni-date">Mar 19</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TIMETABLE PAGE ─────────────────────── -->
+      <div class="page" id="page-timetable">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden">
+          <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+            <div><h2 style="font-size:1rem;font-weight:600;color:#fff">Weekly Timetable</h2><p style="font-size:.8rem;color:var(--muted);margin-top:3px">Class 8 — CBSE · Batch Morning</p></div>
+            <div class="sb-badge">2025–26 Session</div>
+          </div>
+          <div style="overflow-x:auto;padding:16px">
+          <table class="timetable">
+            <thead><tr>
+              <th>Day</th><th>8:00–9:00</th><th>9:00–10:00</th><th>10:00–11:00</th><th>11:30–12:30</th><th>12:30–1:30</th>
+            </tr></thead>
+            <tbody>
+              <tr class="today-row">
+                <td><strong style="color:var(--glow)">Monday ★</strong></td>
+                <td><span class="sub-pill sp-math"><i class="fa-solid fa-square-root-variable"></i> Math</span></td>
+                <td><span class="sub-pill sp-sci"><i class="fa-solid fa-flask"></i> Science</span></td>
+                <td><span class="sub-pill sp-eng"><i class="fa-solid fa-book"></i> English</span></td>
+                <td><span class="sub-pill sp-hin"><i class="fa-solid fa-language"></i> Hindi</span></td>
+                <td><span class="sub-pill sp-ss"><i class="fa-solid fa-globe"></i> Soc. Sci.</span></td>
+              </tr>
+              <tr>
+                <td>Tuesday</td>
+                <td><span class="sub-pill sp-sci">Science</span></td>
+                <td><span class="sub-pill sp-math">Math</span></td>
+                <td><span class="sub-pill sp-ss">Soc. Sci.</span></td>
+                <td><span class="sub-pill sp-eng">English</span></td>
+                <td><span class="sub-pill sp-hin">Hindi</span></td>
+              </tr>
+              <tr>
+                <td>Wednesday</td>
+                <td><span class="sub-pill sp-eng">English</span></td>
+                <td><span class="sub-pill sp-hin">Hindi</span></td>
+                <td><span class="sub-pill sp-math">Math</span></td>
+                <td><span class="sub-pill sp-sci">Science</span></td>
+                <td><span class="sub-pill sp-ss">Soc. Sci.</span></td>
+              </tr>
+              <tr>
+                <td>Thursday</td>
+                <td><span class="sub-pill sp-math">Math</span></td>
+                <td><span class="sub-pill sp-ss">Soc. Sci.</span></td>
+                <td><span class="sub-pill sp-sci">Science</span></td>
+                <td><span class="sub-pill sp-math">Math</span></td>
+                <td><span class="sub-pill sp-eng">English</span></td>
+              </tr>
+              <tr>
+                <td>Friday</td>
+                <td><span class="sub-pill sp-hin">Hindi</span></td>
+                <td><span class="sub-pill sp-eng">English</span></td>
+                <td><span class="sub-pill sp-math">Math</span></td>
+                <td><span class="sub-pill sp-sci">Science</span></td>
+                <td>📝 Revision</td>
+              </tr>
+              <tr>
+                <td>Saturday</td>
+                <td><span class="sub-pill sp-math">Math</span></td>
+                <td><span class="sub-pill sp-sci">Science</span></td>
+                <td colspan="3" style="color:var(--muted);font-size:.82rem">Weekly Test / Doubt Session</td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RESULTS PAGE ───────────────────────── -->
+      <div class="page" id="page-results">
+        <div class="progress-grid" style="margin-bottom:24px">
+          <div class="prog-card">
+            <h3>Subject-wise Performance</h3>
+            <div class="prog-item"><div class="prog-item-hdr"><span>Mathematics</span><span>94%</span></div><div class="prog-bar-bg"><div class="prog-bar" style="width:94%;background:linear-gradient(90deg,var(--glow),var(--glow2))"></div></div></div>
+            <div class="prog-item"><div class="prog-item-hdr"><span>Science</span><span>82%</span></div><div class="prog-bar-bg"><div class="prog-bar" style="width:82%;background:linear-gradient(90deg,var(--glow3),#0891b2)"></div></div></div>
+            <div class="prog-item"><div class="prog-item-hdr"><span>English</span><span>76%</span></div><div class="prog-bar-bg"><div class="prog-bar" style="width:76%;background:linear-gradient(90deg,#c084fc,var(--glow2))"></div></div></div>
+            <div class="prog-item"><div class="prog-item-hdr"><span>Hindi</span><span>88%</span></div><div class="prog-bar-bg"><div class="prog-bar" style="width:88%;background:linear-gradient(90deg,var(--gold),#d97706)"></div></div></div>
+            <div class="prog-item"><div class="prog-item-hdr"><span>Social Science</span><span>80%</span></div><div class="prog-bar-bg"><div class="prog-bar" style="width:80%;background:linear-gradient(90deg,var(--green),#16a34a)"></div></div></div>
+          </div>
+          <div class="prog-card">
+            <h3>Monthly Trend</h3>
+            <canvas id="trendChart" height="180"></canvas>
+          </div>
+        </div>
+        <div class="section-hdr"><h2>All Test Results</h2></div>
+        <div class="results-list">
+          <div class="result-item"><div class="ri-icon" style="background:rgba(99,102,241,.12);color:var(--glow)"><i class="fa-solid fa-square-root-variable"></i></div><div class="ri-info"><strong>Mathematics — Unit Test 3</strong><span>Mar 15, 2026</span></div><div class="ri-score"><div class="score" style="color:var(--green)">47/50</div><div class="grade grade-a">A+</div></div></div>
+          <div class="result-item"><div class="ri-icon" style="background:rgba(6,182,212,.12);color:var(--glow3)"><i class="fa-solid fa-flask"></i></div><div class="ri-info"><strong>Science — Monthly Test</strong><span>Mar 10, 2026</span></div><div class="ri-score"><div class="score" style="color:var(--glow)">41/50</div><div class="grade grade-b">A</div></div></div>
+          <div class="result-item"><div class="ri-icon" style="background:rgba(168,85,247,.12);color:#c084fc"><i class="fa-solid fa-book"></i></div><div class="ri-info"><strong>English — Unit Test 3</strong><span>Mar 8, 2026</span></div><div class="ri-score"><div class="score" style="color:var(--gold)">38/50</div><div class="grade grade-b">B+</div></div></div>
+          <div class="result-item"><div class="ri-icon" style="background:rgba(245,158,11,.12);color:var(--gold)"><i class="fa-solid fa-language"></i></div><div class="ri-info"><strong>Hindi — Unit Test 3</strong><span>Mar 5, 2026</span></div><div class="ri-score"><div class="score" style="color:var(--green)">44/50</div><div class="grade grade-a">A+</div></div></div>
+          <div class="result-item"><div class="ri-icon" style="background:rgba(34,197,94,.12);color:var(--green)"><i class="fa-solid fa-globe"></i></div><div class="ri-info"><strong>Social Science — Monthly</strong><span>Feb 28, 2026</span></div><div class="ri-score"><div class="score" style="color:var(--glow)">40/50</div><div class="grade grade-b">A</div></div></div>
+        </div>
+      </div>
+
+      <!-- ── ASSIGNMENTS PAGE ───────────────────── -->
+      <div class="page" id="page-assignments">
+        <div class="section-hdr"><h2>All Assignments</h2></div>
+        <div class="assign-list" style="gap:12px">
+          <div class="assign-item"><div class="ai-check" onclick="toggleAssign(this)"></div><div class="ai-info"><strong>Algebra — Chapter 5 Exercise</strong><span>Mathematics · Sir Abhinas · Given: Mar 18</span></div><div class="ai-due due-urgent">Tomorrow</div></div>
+          <div class="assign-item"><div class="ai-check" onclick="toggleAssign(this)"></div><div class="ai-info"><strong>Essay: My Role Model (300 words)</strong><span>English · Ma'am Priya · Given: Mar 19</span></div><div class="ai-due due-soon">Mar 24</div></div>
+          <div class="assign-item"><div class="ai-check" onclick="toggleAssign(this)"></div><div class="ai-info"><strong>Diagram: Human Digestive System</strong><span>Science · Sir Ranjit · Given: Mar 20</span></div><div class="ai-due due-ok">Mar 28</div></div>
+          <div class="assign-item"><div class="ai-check done" onclick="toggleAssign(this)"><i class="fa-solid fa-check"></i></div><div class="ai-info" style="opacity:.6"><strong style="text-decoration:line-through">Map Work: Indian Rivers</strong><span>Social Science · Completed</span></div><div class="ai-due due-ok">Done ✓</div></div>
+          <div class="assign-item"><div class="ai-check done" onclick="toggleAssign(this)"><i class="fa-solid fa-check"></i></div><div class="ai-info" style="opacity:.6"><strong style="text-decoration:line-through">Grammar Worksheet — Tenses</strong><span>English · Completed</span></div><div class="ai-due due-ok">Done ✓</div></div>
+        </div>
+      </div>
+
+      <!-- ── ATTENDANCE PAGE ────────────────────── -->
+      <div class="page" id="page-attendance">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+          <div class="attend-card" style="flex-direction:column;align-items:flex-start;gap:16px">
+            <h3 style="font-size:1rem;font-weight:600;color:#fff">Monthly Summary</h3>
+            <div style="display:flex;align-items:center;gap:24px;width:100%">
+              <div class="ring-wrap">
+                <svg width="110" height="110" viewBox="0 0 110 110"><circle cx="55" cy="55" r="46" fill="none" stroke="rgba(99,102,241,.12)" stroke-width="10"/><circle cx="55" cy="55" r="46" fill="none" stroke="url(#rg2)" stroke-width="10" stroke-dasharray="289" stroke-dashoffset="23" stroke-linecap="round"/><defs><linearGradient id="rg2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#22c55e"/></linearGradient></defs></svg>
+                <div class="ring-center"><span>92%</span><small>Present</small></div>
+              </div>
+              <div style="flex:1">
+                <div class="ad-row"><span>Total Classes</span><span>25</span></div>
+                <div class="ad-row"><span>Present</span><span style="color:var(--green)">23</span></div>
+                <div class="ad-row"><span>Absent</span><span style="color:var(--red)">2</span></div>
+                <div class="ad-row"><span>Late</span><span style="color:var(--gold)">1</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="prog-card">
+            <h3>Subject Attendance</h3>
+            <div class="prog-item"><div class="prog-item-hdr"><span>Mathematics</span><span>96%</span></div><div class="prog-bar-bg"><div class="prog-bar" style="width:96%;background:linear-gradient(90deg,var(--glow),var(--glow2))"></div></div></div>
+            <div class="prog-item"><div class="prog-item-hdr"><span>Science</span><span>92%</span></div><div class="prog-bar-bg"><div class="prog-bar" style="width:92%;background:linear-gradient(90deg,var(--glow3),#0891b2)"></div></div></div>
+            <div class="prog-item"><div class="prog-item-hdr"><span>English</span><span>88%</span></div><div class="prog-bar-bg"><div class="prog-bar" style="width:88%;background:linear-gradient(90deg,#c084fc,var(--glow2))"></div></div></div>
+            <div class="prog-item"><div class="prog-item-hdr"><span>Hindi</span><span>84%</span></div><div class="prog-bar-bg"><div class="prog-bar" style="width:84%;background:linear-gradient(90deg,var(--gold),#d97706)"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NOTES PAGE ─────────────────────────── -->
+      <div class="page" id="page-notes">
+        <div class="section-hdr"><h2>Study Notes & Materials</h2></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          ${['Mathematics Ch. 5 — Algebraic Expressions','Science Ch. 7 — Conservation','English Grammar — Tenses Worksheet','Hindi Ch. 4 — Poem Notes','Soc. Sci. — French Revolution Summary','Math Formula Sheet — Quick Ref'].map((n,i)=>{
+            const icons=['fa-square-root-variable','fa-flask','fa-book','fa-language','fa-globe','fa-calculator'];
+            const cols=['var(--glow)','var(--glow3)','#c084fc','var(--gold)','var(--green)','var(--glow)'];
+            const bgs=['rgba(99,102,241,.12)','rgba(6,182,212,.12)','rgba(168,85,247,.12)','rgba(245,158,11,.12)','rgba(34,197,94,.12)','rgba(99,102,241,.12)'];
+            return `<div class="scard" style="--ic:${cols[i]};--ib:${bgs[i]}">
+              <div class="scard-icon"><i class="fa-solid ${icons[i]}"></i></div>
+              <div style="font-size:.88rem;font-weight:600;color:#fff;margin-bottom:6px">${n}</div>
+              <div style="font-size:.78rem;color:var(--muted);margin-bottom:14px">PDF · Uploaded Mar ${10+i}</div>
+              <button onclick="showToast('📄 Opening note...','var(--glow)')" style="background:rgba(99,102,241,.12);border:1px solid var(--border);color:var(--glow);padding:7px 16px;border-radius:20px;font-size:.78rem;cursor:pointer;font-family:var(--font)"><i class="fa-solid fa-download"></i> Download</button>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- ── FEES PAGE ──────────────────────────── -->
+      <div class="page" id="page-fees">
+        <div class="fee-summary">
+          <div class="fee-card"><div class="label">Total Annual Fee</div><div class="amount" style="color:#fff">₹18,000</div><div style="font-size:.78rem;color:var(--muted)">2025–26 Session</div></div>
+          <div class="fee-card"><div class="label">Amount Paid</div><div class="amount" style="color:var(--green)">₹12,000</div><div style="font-size:.78rem;color:var(--green)">✓ 2 installments paid</div></div>
+          <div class="fee-card" style="border-color:rgba(239,68,68,.3)"><div class="label">Amount Due</div><div class="amount" style="color:var(--red)">₹6,000</div><div style="font-size:.78rem;color:var(--red)">Due: April 1, 2026</div></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden">
+          <div style="padding:18px 24px;border-bottom:1px solid var(--border)"><h2 style="font-size:1rem;font-weight:600;color:#fff">Fee History</h2></div>
+          <div style="overflow-x:auto;padding:12px">
+          <table class="fee-table">
+            <thead><tr><th>Installment</th><th>Amount</th><th>Due Date</th><th>Paid Date</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>1st Installment</td><td>₹6,000</td><td>Jul 1, 2025</td><td>Jun 28, 2025</td><td><span class="status-pill sp-paid"><i class="fa-solid fa-check-circle"></i> Paid</span></td><td><button class="pay-btn" onclick="showToast('📄 Receipt downloaded!','var(--green)')">Receipt</button></td></tr>
+              <tr><td>2nd Installment</td><td>₹6,000</td><td>Nov 1, 2025</td><td>Oct 30, 2025</td><td><span class="status-pill sp-paid"><i class="fa-solid fa-check-circle"></i> Paid</span></td><td><button class="pay-btn" onclick="showToast('📄 Receipt downloaded!','var(--green)')">Receipt</button></td></tr>
+              <tr><td>3rd Installment</td><td>₹6,000</td><td>Apr 1, 2026</td><td>—</td><td><span class="status-pill sp-due"><i class="fa-solid fa-clock"></i> Due</span></td><td><button class="pay-btn" onclick="showToast('📲 Opening payment gateway...','var(--glow)')"><i class="fa-solid fa-indian-rupee-sign"></i> Pay Now</button></td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NOTICES PAGE ───────────────────────── -->
+      <div class="page" id="page-notices">
+        <div class="notice-list" style="gap:12px">
+          <div class="notice-item"><div class="ni-dot" style="background:var(--red)"></div><div class="ni-info"><strong>Half-Yearly Exam Schedule Released</strong><span>Exams begin April 7. Mathematics on April 7, Science April 9, English April 11, Hindi April 13, Social Science April 15. Revision classes will be conducted on April 4–6.</span></div><div class="ni-date">Mar 20</div></div>
+          <div class="notice-item"><div class="ni-dot" style="background:var(--gold)"></div><div class="ni-info"><strong>Holiday on March 25 — Holi</strong><span>No classes on March 25. Classes resume March 26 as per the regular schedule.</span></div><div class="ni-date">Mar 19</div></div>
+          <div class="notice-item"><div class="ni-dot" style="background:var(--glow)"></div><div class="ni-info"><strong>New Branch Opening — Patia</strong><span>We are excited to announce the opening of our 3rd branch at Patia, Bhubaneswar. Admissions now open.</span></div><div class="ni-date">Mar 15</div></div>
+          <div class="notice-item"><div class="ni-dot" style="background:var(--green)"></div><div class="ni-info"><strong>Fee Reminder — 3rd Installment Due</strong><span>The 3rd installment of ₹6,000 is due by April 1, 2026. Please pay via UPI or visit the branch.</span></div><div class="ni-date">Mar 10</div></div>
+        </div>
+      </div>
+
+      <!-- ── PROFILE PAGE ───────────────────────── -->
+      <div class="page" id="page-profile">
+        <div class="profile-hero">
+          <div class="ph-avatar" id="phAvatar">R</div>
+          <div class="ph-info">
+            <h2 id="phName">Riya Patel</h2>
+            <p id="phSub">Class 8 · CBSE Board · Morning Batch</p>
+            <div class="ph-tags">
+              <span class="ph-tag"><i class="fa-solid fa-id-card"></i> AV2026001</span>
+              <span class="ph-tag"><i class="fa-solid fa-star"></i> A Grade</span>
+              <span class="ph-tag"><i class="fa-solid fa-user-check"></i> 92% Attendance</span>
+              <span class="ph-tag" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.2);color:var(--green)"><i class="fa-solid fa-circle"></i> Active</span>
+            </div>
+          </div>
+        </div>
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>Personal Information</h3>
+            <div class="info-row"><span>Full Name</span><span id="infoName">Riya Patel</span></div>
+            <div class="info-row"><span>Roll Number</span><span>AV2026001</span></div>
+            <div class="info-row"><span>Date of Birth</span><span>12 Aug 2012</span></div>
+            <div class="info-row"><span>Gender</span><span>Female</span></div>
+            <div class="info-row"><span>Blood Group</span><span>O+</span></div>
+          </div>
+          <div class="info-card">
+            <h3>Academic Information</h3>
+            <div class="info-row"><span>Class</span><span>8th Standard</span></div>
+            <div class="info-row"><span>Board</span><span>CBSE</span></div>
+            <div class="info-row"><span>Batch</span><span>Morning (7 AM – 1 PM)</span></div>
+            <div class="info-row"><span>Session</span><span>2025–26</span></div>
+            <div class="info-row"><span>Branch</span><span>Main Branch</span></div>
+          </div>
+          <div class="info-card">
+            <h3>Contact Information</h3>
+            <div class="info-row"><span>Parent Name</span><span>Suresh Patel</span></div>
+            <div class="info-row"><span>Mobile</span><span>9876543210</span></div>
+            <div class="info-row"><span>Email</span><span>suresh@email.com</span></div>
+            <div class="info-row"><span>Address</span><span>Patia, Bhubaneswar</span></div>
+          </div>
+          <div class="info-card">
+            <h3>Performance Overview</h3>
+            <div class="info-row"><span>Overall Score</span><span style="color:var(--green)">86%</span></div>
+            <div class="info-row"><span>Best Subject</span><span>Mathematics (94%)</span></div>
+            <div class="info-row"><span>Tests Taken</span><span>15</span></div>
+            <div class="info-row"><span>Rank in Class</span><span style="color:var(--gold)">🥇 3rd</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /dashScreen -->
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toastIcon"></div>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+/* ─── AUTH DATA ─────────────────────────────────────── */
+const USERS = {
+  'AV2026001': { pass:'student123', role:'student', name:'Riya Patel', roll:'AV2026001', badge:'Class 8 · CBSE' },
+  'teacher@av.com': { pass:'teacher123', role:'teacher', name:'Abhinas Dash', roll:'Teacher', badge:'Faculty · Math' },
+  'admin@av.com': { pass:'admin123', role:'admin', name:'Admin', roll:'Administrator', badge:'System Admin' },
+};
+
+let currentRole = 'student';
+
+function setRole(role, btn) {
+  currentRole = role;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ─── LOGIN ─────────────────────────────────────────── */
+function doLogin() {
+  const id = document.getElementById('loginId').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('loginError');
+
+  err.classList.remove('show');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in...';
+
+  setTimeout(() => {
+    const user = USERS[id];
+    if (user && user.pass === pass) {
+      document.getElementById('sbName').textContent = user.name;
+      document.getElementById('sbRoll').textContent = user.roll;
+      document.getElementById('sbBadge').textContent = user.badge;
+      document.getElementById('sbAvatar').textContent = user.name[0];
+      document.getElementById('phAvatar').textContent = user.name[0];
+      document.getElementById('phName').textContent = user.name;
+      document.getElementById('infoName').textContent = user.name;
+      document.getElementById('phSub').textContent = user.badge;
+
+      document.getElementById('loginScreen').classList.remove('active');
+      document.getElementById('dashScreen').classList.add('active');
+      buildCalendar();
+      animateBars();
+      showToast('👋 Welcome back, ' + user.name + '!', 'var(--glow)');
+    } else {
+      err.classList.add('show');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+    }
+  }, 900);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('loginScreen').classList.contains('active')) doLogin();
+});
+
+function doLogout() {
+  document.getElementById('dashScreen').classList.remove('active');
+  document.getElementById('loginScreen').classList.add('active');
+  document.getElementById('loginId').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginBtn').innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+}
+
+/* ─── PAGES ─────────────────────────────────────────── */
+const pageTitles = {
+  home:'Dashboard', timetable:'Timetable', results:'My Results',
+  assignments:'Assignments', attendance:'Attendance', notes:'Study Notes',
+  fees:'Fee Records', notices:'Notices', profile:'My Profile'
+};
+
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('pageTitle').textContent = pageTitles[name] || name;
+  if (name === 'results') setTimeout(animateBars, 200);
+  closeSidebar();
+}
+
+/* ─── SIDEBAR MOBILE ───────────────────────────────── */
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sbOverlay').classList.add('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sbOverlay').classList.remove('show');
+}
+
+/* ─── PROGRESS BARS ──────────────────────────────────  */
+function animateBars() {
+  document.querySelectorAll('.prog-bar').forEach(bar => {
+    const w = bar.style.width;
+    bar.style.width = '0';
+    setTimeout(() => bar.style.width = w, 100);
+  });
+}
+
+/* ─── ASSIGNMENTS TOGGLE ─────────────────────────────  */
+function toggleAssign(el) {
+  const isDone = el.classList.toggle('done');
+  el.innerHTML = isDone ? '<i class="fa-solid fa-check"></i>' : '';
+  const info = el.parentElement.querySelector('.ai-info');
+  info.style.opacity = isDone ? '.5' : '1';
+  info.querySelector('strong').style.textDecoration = isDone ? 'line-through' : '';
+  showToast(isDone ? '✅ Marked as done!' : '↩️ Marked as pending', isDone ? 'var(--green)' : 'var(--muted)');
+}
+
+/* ─── CALENDAR ───────────────────────────────────────  */
+function buildCalendar() {
+  const now = new Date(2026, 2, 21); // March 21 2026
+  const y = now.getFullYear(), m = now.getMonth();
+  const first = new Date(y, m, 1).getDay();
+  const days = new Date(y, m + 1, 0).getDate();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const events = [15, 20, 25, 28];
+  const holidays = [25];
+  let html = `<div class="cal-hdr"><h3>${months[m]} ${y}</h3><div style="display:flex;gap:4px"><button class="cal-nav">‹</button><button class="cal-nav">›</button></div></div>`;
+  html += '<div class="cal-grid">';
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => html += `<div class="cal-day-hdr">${d}</div>`);
+  for (let i = 0; i < first; i++) html += `<div class="cal-day other-month">${new Date(y,m,-(first-i-1)).getDate()}</div>`;
+  for (let d = 1; d <= days; d++) {
+    let cls = 'cal-day';
+    if (d === 21) cls += ' today';
+    if (events.includes(d)) cls += ' has-event';
+    if (holidays.includes(d)) cls += ' holiday';
+    html += `<div class="${cls}">${d}</div>`;
+  }
+  html += '</div>';
+  document.getElementById('miniCalendar').innerHTML = html;
+}
+
+/* ─── TREND CHART ────────────────────────────────────  */
+window.addEventListener('load', () => {
+  const canvas = document.getElementById('trendChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const labels = ['Nov','Dec','Jan','Feb','Mar'];
+  const data = [72, 78, 80, 83, 86];
+  const grad = ctx.createLinearGradient(0, 0, 0, 180);
+  grad.addColorStop(0, 'rgba(99,102,241,0.4)');
+  grad.addColorStop(1, 'rgba(99,102,241,0)');
+  // Simple canvas chart (no external lib needed)
+  const W = canvas.width = canvas.offsetWidth, H = 180;
+  canvas.height = H;
+  const pad = 30, chartW = W - pad*2, chartH = H - pad*2;
+  const min = 60, max = 100;
+  ctx.clearRect(0,0,W,H);
+  // Grid lines
+  for (let i = 0; i <= 4; i++) {
+    const y = pad + (chartH / 4) * i;
+    ctx.strokeStyle = 'rgba(99,102,241,0.1)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W-pad, y); ctx.stroke();
+    ctx.fillStyle = 'rgba(136,144,181,0.6)';
+    ctx.font = '10px DM Sans';
+    ctx.fillText(max - (max-min)/4*i + '%', 2, y+4);
+  }
+  // Area fill
+  const pts = data.map((v,i) => ({x: pad + (chartW/(data.length-1))*i, y: pad + chartH - ((v-min)/(max-min))*chartH}));
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, H-pad);
+  pts.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(pts[pts.length-1].x, H-pad);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+  // Line
+  ctx.beginPath();
+  pts.forEach((p,i) => i === 0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle = '#6366f1';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  // Dots & labels
+  pts.forEach((p,i) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 5, 0, Math.PI*2);
+    ctx.fillStyle = i === pts.length-1 ? '#a855f7' : '#6366f1';
+    ctx.fill();
+    ctx.strokeStyle = '#07080f';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#e2e4f3';
+    ctx.font = '10px DM Sans';
+    ctx.textAlign = 'center';
+    ctx.fillText(labels[i], p.x, H-8);
+    ctx.fillText(data[i]+'%', p.x, p.y-10);
+  });
+});
+
+/* ─── TOAST ──────────────────────────────────────────  */
+let toastTimer;
+function showToast(msg, color = 'var(--glow)') {
+  const t = document.getElementById('toast');
+  const ic = document.getElementById('toastIcon');
+  const tx = document.getElementById('toastMsg');
+  clearTimeout(toastTimer);
+  tx.textContent = msg;
+  ic.style.background = color;
+  ic.style.opacity = '0.2';
+  t.classList.add('show');
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* Date in topbar */
+document.getElementById('pageDate').textContent = new Date(2026,2,21).toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+</script>
+</body>
+</html>
